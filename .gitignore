@@ -17,3 +17,5 @@ switch_list.txt
 # Virtual Environments (just in case)
 venv/
 env/
+
+*:Zone.Identifier

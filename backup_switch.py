@@ -124,7 +124,6 @@ def perform_backup(ip, device_type, username, password, enable_secret,
 
 def show_diff_for_switch(ip):
     """Compare the two most recent local backups for a specific IP."""
-    # (This function remains exactly the same as the previous version)
     print(f"\n--- Checking configuration changes for {ip} ---")
     previous_files = [f for f in os.listdir(backup_dir) if f.startswith(ip) and f.endswith('.cfg')]
     if len(previous_files) < 2:
@@ -184,10 +183,10 @@ def print_summary(success_list, failed_list):
     print("\n" + "="*40)
     print("             BACKUP SUMMARY")
     print("="*40)
-    print(f"\n✅ Successful Backups ({len(success_list)}):")
+    print(f"\n Successful Backups ({len(success_list)}):")
     for ip in success_list: print(f"  - {ip}")
     if not success_list: print("  None")
-    print(f"\n❌ Failed Backups ({len(failed_list)}):")
+    print(f"\n Failed Backups ({len(failed_list)}):")
     for ip in failed_list: print(f"  - {ip}")
     if not failed_list: print("  None")
     print("\n" + "="*40)

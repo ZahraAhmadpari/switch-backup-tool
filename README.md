@@ -1,76 +1,63 @@
 # Cisco Switch Backup Tool
 
-A Python-based automation tool for securely backing up configuration files from Cisco switches over SSH or Telnet and uploading them to a remote SFTP server. The tool also includes a built-in diff engine to track configuration changes over time.
+A Python-based automation tool to securely back up configuration files from Cisco switches (supporting both SSH and Telnet) and upload them to a remote SFTP server. It also includes a built-in diff engine to track configuration changes over time.
 
 ## Features
 
 - **Multi-Protocol Support:** Connects to modern switches via SSH and legacy switches via Telnet.
-- **Interactive Menu:** Provides a user-friendly CLI menu, with the option to go back (`b`) at any step.
-- **Secure Authentication:** Prompts for passwords and enable secrets at runtime; no credentials are hardcoded.
-- **Local and Remote Storage:** Saves a local copy for configuration comparison and uploads a copy to a remote SFTP server.
-- **Configuration Diffing:** Compares the two most recent backups of a switch and displays changes grouped by configuration blocks, such as interfaces.
-- **Graceful Interruption:** Handles `Ctrl+C` safely without displaying raw Python tracebacks.
-- **Inventory Management:** Reads switch IP addresses from a simple text file (`switch_list.txt`).
+- **Interactive Menu:** User-friendly CLI menu with the ability to go back (`b`) at any step.
+- **Secure Authentication:** Prompts for passwords and enable secrets at runtime (no hardcoded credentials).
+- **Local & Remote Storage:** Saves a local copy for diffing and uploads a secure copy to an SFTP server.
+- **Configuration Diffing:** Compare the two most recent backups of any switch to see exactly what changed, grouped by interface blocks.
+- **Graceful Interruption:** Safely handles `Ctrl+C` without throwing raw Python tracebacks.
+- **Inventory Management:** Reads the list of switches from a simple, readable text file (`switch_list.txt`).
 
 ## Prerequisites
 
-- **Python 3.8 or later**
-- **Netmiko** — for SSH and Telnet connections
-- **Paramiko** — for SFTP uploads
+- **Python 3.8+**
+- **Netmiko** (for SSH/Telnet connections)
+- **Paramiko** (for SFTP uploads)
 
-Install the required Python libraries with pip:
-
+You can install the required libraries using pip:
 ```bash
 pip install netmiko paramiko
 ```
 
-## Project Structure
-
+Project Structure
 ```text
 switch-backup-tool/
 │
-├── backup_switch.py           # Main script
-├── switch_list.txt.example    # Example switch inventory file
-├── README.md                  # Project documentation
+├── backup_switch.py           # The main script
+├── switch_list.txt.example    # Example inventory file
+├── README.md                  # This file
 ├── LICENSE                    # MIT License
 ├── .gitignore                 # Git ignore rules
-└── legacy/                    # Older versions (e.g., the TFTP version)
-```
+└── legacy/                    # Older versions (e.g., TFTP version)
 
-## Setup and Usage
 
-### 1. Prepare the Inventory File
+Setup & Usage
 
-Copy the example inventory file and rename it:
+1. Prepare the Inventory File
 
-```bash
+Copy the example file and add your switches:
 cp switch_list.txt.example switch_list.txt
-```
 
-Edit `switch_list.txt` and add your switch IP addresses under the appropriate protocol sections:
-
-```ini
+Edit switch_list.txt and add your IPs under the appropriate section:
 [SSH]
 192.168.1.10
 192.168.1.11
 
 [TELNET]
 192.168.1.50
-```
 
-### 2. Run the Script
+2. Run the Script
 
-Start the tool with:
-
-```bash
 python backup_switch.py
-```
 
-### 3. Use the Interactive Menu
+3. Follow the Menu
 
-The interactive menu guides you through the available operations:
+The interactive menu will guide you through the process:
 
-```text
 ========================================
           SWITCH BACKUP TOOL MENU
 ========================================
@@ -79,45 +66,39 @@ The interactive menu guides you through the available operations:
 3. Show Configuration Changes (Diff) for an IP
 4. Exit
 ========================================
-```
 
-#### Menu Options
+Option 1: Backs up all switches in the inventory file.
 
-- **Option 1 — Backup All Switches:** Backs up all switches listed in the inventory file.
-- **Option 2 — Backup a Single Switch:** Backs up a specific switch by IP address. After the backup is complete, the tool asks whether you want to back up another switch, without requiring you to re-enter your credentials.
-- **Option 3 — Show Configuration Changes (Diff):** Compares the two most recent backups for the specified IP address. Added lines are displayed in green, and removed lines are displayed in red.
-- **Option 4 — Exit:** Closes the application.
+Option 2: Backs up a specific switch. After finishing, it asks if you want to back up another one (without re-entering credentials).
 
-**Navigation:** At any prompt, enter `b` to return to the main menu.
+Option 3: Compares the two most recent backups of a specific switch and displays the changes in green (added) and red (removed).
 
-## How Configuration Diffing Works
+b command: At any prompt, type b to go back to the main menu.
 
-The tool stores local backups in the `local_backups/` directory. Each backup filename includes the switch IP address and a timestamp. For example:
 
-```text
-192.168.1.10-backup-2026-11-03_14-30-15.cfg
-```
+How the Diffing Works
+The script saves local backups in the local_backups/ directory with timestamps (e.g., 192.168.1.10-backup-2026-11-03_14-30-15.cfg). When you select Option 3, it:
 
-When you select **Option 3**, the tool:
+Finds all backups for the target IP.
 
-1. Finds all backup files associated with the specified IP address.
-2. Sorts the files by their actual modification time.
-3. Selects and compares the two most recent backups.
-4. Splits the configuration into logical blocks, such as `interface GigabitEthernet1/0/18` and `GLOBAL_SETTINGS`.
-5. Displays only the blocks that contain changes.
+Sorts them by actual modification time.
 
-## Security Notes
+Compares the two most recent files.
 
-- **No Hardcoded Credentials:** Switch and SFTP passwords are requested at runtime.
-- **Secure SFTP Transfers:** Configuration files are uploaded using SFTP (SSH File Transfer Protocol), which encrypts data in transit.
-- **Git Ignore Rules:** The actual switch inventory file (`switch_list.txt`) and local backups are excluded from Git to help prevent accidental exposure of sensitive information.
-- **Local Backup Protection:** Backups are stored in the `local_backups/` directory on the local machine. Make sure this directory is protected with appropriate operating system permissions.
+Splits the configuration into logical blocks (e.g., interface GigabitEthernet1/0/18, GLOBAL_SETTINGS) and only shows the blocks that have changed.
 
-## License
+Security Notes
+No Hardcoded Credentials: Switch and SFTP passwords are prompted at runtime.
 
-This project is licensed under the MIT License. See the `LICENSE` file for details.
+SFTP Transfer: All configuration files are uploaded to the remote server using SFTP (SSH File Transfer Protocol), ensuring encryption in transit.
 
-## Author
+.gitignore: The actual switch inventory (switch_list.txt) and local backups are excluded from Git to prevent accidental leaks.
 
-**Zahra Ahmadpari**  
-GitHub: [@ZahraAhmadpari](https://github.com/ZahraAhmadpari)
+Local Backups: Backups are stored in local_backups/ on the local machine. Ensure this directory is protected by OS-level permissions.
+
+License
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+Author
+Zahra Ahmadpari
+GitHub: @ZahraAhmadpari

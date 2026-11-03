@@ -1,0 +1,19 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Local backups folder (contains sensitive switch configs)
+local_backups/
+
+# Actual switch list (contains sensitive IPs)
+switch_list.txt
+
+# Logs
+*.log
+
+# Environment variables
+.env
+
+# Virtual Environments (just in case)
+venv/
+env/

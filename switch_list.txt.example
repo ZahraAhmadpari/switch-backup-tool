@@ -1,0 +1,15 @@
+# ==========================================
+# Switch Backup Inventory Example
+# ==========================================
+
+[SSH]
+# Add modern switches that support SSH here:
+192.168.1.10
+192.168.1.11
+192.168.1.12
+
+
+[TELNET]
+# Add legacy switches that only support Telnet here:
+192.168.1.50
+192.168.1.51
